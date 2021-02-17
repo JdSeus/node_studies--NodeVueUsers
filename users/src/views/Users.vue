@@ -33,7 +33,7 @@
                     </header>
                     <footer class="card-footer">
                         <a href="#" class="card-footer-item" @click="hideModal()">Cancelar</a>
-                        <a href="#" class="card-footer-item">Deletar</a>
+                        <a href="#" class="card-footer-item" @click="deleteUser()">Deletar</a>
                     </footer>
                 </div>
             </div>
@@ -66,6 +66,7 @@ export default {
         return {
             users: [],
             showModal: false,
+            deleteUserId: -1,
         }
     },
     methods: {
@@ -73,8 +74,24 @@ export default {
             this.showModal = false;
         },
         showModalUser(id) {
-            console.log("Id do user: " + id);
+            this.deleteUserId = id;
             this.showModal = true;
+        },
+        deleteUser() {
+            var req = {
+                headers: {
+                    Authorization: "Bearer " + localStorage.getItem('token')
+                }
+            }
+
+            axios.delete("http://localhost:8686/user/" + this.deleteUserId, req).then(res => {
+                console.log(res);
+                this.hideModal();
+                this.users = this.users.filter( u => u.id != this.deleteUserId);
+            }).catch(err => {
+                console.log(err);
+                this.hideModal();
+            });
         },
         processedRole: function(value) {
             if (value == 0) {
