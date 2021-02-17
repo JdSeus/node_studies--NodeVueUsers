@@ -6,6 +6,13 @@
         <hr>
         <div class="columns is-centered">
             <div class="column is-half">
+                <div v-if="error != undefined">
+                    <hr>
+                    <div class="notification is-danger">
+                        <p>{{error}}</p>
+                    </div>
+                    <hr>
+                </div>
                 <p>Nome</p>
                 <input v-model="name" class="input" type="text" placeholder="Nome do usuário">
 
@@ -29,7 +36,8 @@ export default {
         return {
             name: '',
             password: '',
-            email: ''
+            email: '',
+            error: undefined
         }
     },
     methods: {
@@ -38,11 +46,13 @@ export default {
                 name: this.name,
                 password: this.password,
                 email: this.email
-            }).then(res => {
+            }).then((res) => {
                 console.log(res);
-            }).catch(err => {
-                var msgErro = err.response.data.err
-                console.log(msgErro);
+                this.$router.push({name: 'Home'});
+            }).catch((err) => {
+                if (err.response.data.err != undefined) {
+                    this.error = err.response.data.err;
+                }
             });
 
         }
